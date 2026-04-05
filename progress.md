@@ -37,11 +37,14 @@ FoodLens is a minimal, clean food nutrition scanner app built with React Native 
 - [x] Expo doctor passes all 17 checks
 - [x] App runs successfully in Expo Go
 
-### Phase 2: Camera & Image (PENDING)
-- [ ] Image capture with expo-camera
-- [ ] Image picker from gallery with expo-image-picker
-- [ ] Image preview and retake functionality
-- [ ] Image compression/optimization
+### Phase 2: Camera & Image ✅ COMPLETED
+- [x] Image capture with expo-camera
+- [x] Image picker from gallery with expo-image-picker
+- [x] Image preview and retake functionality
+- [x] Image compression/optimization (0.8 quality)
+- [x] Connect Scan → Results with mock data
+- [x] Save to history functionality
+- [x] Display scanned image in Results screen
 
 ### Phase 3: AI Integration (PENDING)
 - [ ] Create FoodAnalysisService interface (adapter pattern)

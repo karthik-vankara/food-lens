@@ -138,13 +138,15 @@ FoodLens/
 - Placeholder screens for all flows
 - App runs successfully in Expo Go
 
-### Phase 2: Camera & Image (Next)
-- Camera capture integration
+### Phase 2: Camera & Image ✅
+- Camera capture integration (expo-camera via expo-image-picker)
 - Gallery image picker
-- Image preview and retake
-- Image compression
+- Image preview with scanned image in Results
+- Save to history flow
+- Image compression (0.8 quality)
+- Mock data generation for testing flow
 
-### Phase 3: AI Integration
+### Phase 3: AI Integration (Next)
 - FoodAnalysisService interface
 - Gemini Vision API adapter
 - Prompt engineering for nutrition extraction

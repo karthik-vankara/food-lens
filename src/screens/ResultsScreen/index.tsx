@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,6 +7,7 @@ import { ScreenNames, FoodItem } from '../../types';
 import { COLORS, SPACING } from '../../theme';
 import { Typography, Card, Button } from '../../components';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppStore } from '../../store/appStore';
 
 type ResultsRouteProp = RouteProp<ScreenNames, 'Results'>;
 type ResultsNavProp = NativeStackNavigationProp<ScreenNames, 'Results'>;
@@ -15,11 +16,18 @@ export const ResultsScreen: React.FC = () => {
   const route = useRoute<ResultsRouteProp>();
   const navigation = useNavigation<ResultsNavProp>();
   const { foodItem } = route.params;
+  const addFoodItem = useAppStore((state) => state.addFoodItem);
+
+  const handleSaveToHistory = async () => {
+    await addFoodItem(foodItem);
+    navigation.navigate('Home');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
+          <Image source={{ uri: foodItem.imageUrl }} style={styles.foodImage} />
           <Typography variant="h2">{foodItem.name}</Typography>
           <Typography variant="caption" color={COLORS.textSecondary}>
             {foodItem.portionSize} ({foodItem.portionGrams}g)
@@ -67,10 +75,7 @@ export const ResultsScreen: React.FC = () => {
         <View style={styles.actions}>
           <Button
             title="Save to History"
-            onPress={() => {
-              // TODO: Save to history
-              navigation.navigate('Home');
-            }}
+            onPress={handleSaveToHistory}
             icon={<Ionicons name="save-outline" size={18} color={COLORS.white} />}
           />
           <View style={styles.spacer} />
@@ -103,6 +108,13 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: SPACING.md,
     gap: SPACING.xs,
+    alignItems: 'center',
+  },
+  foodImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 16,
+    marginBottom: SPACING.md,
   },
   card: {
     marginBottom: SPACING.md,

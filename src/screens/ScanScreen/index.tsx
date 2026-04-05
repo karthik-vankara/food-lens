@@ -4,12 +4,36 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
-import { ScreenNames } from '../../types';
+import { ScreenNames, FoodItem } from '../../types';
 import { COLORS, SPACING } from '../../theme';
 import { Typography, Button } from '../../components';
 import { Ionicons } from '@expo/vector-icons';
 
 type ScanNavProp = NativeStackNavigationProp<ScreenNames, 'Scan'>;
+
+const createMockFoodItem = (imageUri: string): FoodItem => ({
+  id: Date.now().toString(),
+  name: 'Grilled Chicken Salad',
+  confidence: 0.85,
+  portionSize: '1 serving',
+  portionGrams: 250,
+  nutrition: {
+    calories: 320,
+    protein: 28,
+    carbs: 12,
+    fat: 18,
+    fiber: 4,
+    vitamins: [
+      { name: 'Vitamin A', amount: '15%', dailyValue: 15 },
+      { name: 'Vitamin C', amount: '20%', dailyValue: 20 },
+      { name: 'Vitamin D', amount: '10%', dailyValue: 10 },
+      { name: 'Calcium', amount: '12%', dailyValue: 12 },
+      { name: 'Iron', amount: '8%', dailyValue: 8 },
+    ],
+  },
+  imageUrl: imageUri,
+  scannedAt: new Date().toISOString(),
+});
 
 export const ScanScreen: React.FC = () => {
   const navigation = useNavigation<ScanNavProp>();
@@ -46,9 +70,8 @@ export const ScanScreen: React.FC = () => {
 
   const analyzeFood = () => {
     if (!selectedImage) return;
-    // TODO: Phase 3 - Call Gemini Vision API
-    // Placeholder: navigate to results with mock data
-    alert('Analysis coming in Phase 3!');
+    const mockFoodItem = createMockFoodItem(selectedImage);
+    navigation.navigate('Results', { foodItem: mockFoodItem });
   };
 
   return (
