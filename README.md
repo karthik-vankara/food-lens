@@ -163,7 +163,16 @@ FoodLens/
 - Save to history flow implemented
 - Loading states during analysis
 
-### Phase 5: History & Polish (Next)
+### Phase 5: History & Polish ✅
+- Real history data integration (connected to Zustand + AsyncStorage)
+- Loading states and error handling
+- Empty states for no scans
+- Splash screen configured (brand blue background)
+- Version bump: 1.0.1
+
+---
+
+## App Info
 - Real history data integration
 - Loading states and error handling
 - App icon and splash screen
@@ -246,6 +255,10 @@ const ACTIVE_PROVIDER: AIProvider = 'openai';  // or 'gemini'
 6. **Minimal & Clean UI** - Focus on data, not decoration
 
 ---
+
+## Version
+
+**Current Version:** 1.0.1
 
 ## License
 
