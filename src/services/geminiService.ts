@@ -1,6 +1,6 @@
 import { FoodItem, AnalysisError } from '../types';
 
-const GEMINI_API_KEY = 'AIzaSyCKX2bd8UzK9Si84BMcz2hUHRXyKDSRvqk';
+const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY';
 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent';
 
