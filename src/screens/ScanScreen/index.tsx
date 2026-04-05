@@ -1,43 +1,22 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
-import { ScreenNames, FoodItem } from '../../types';
-import { COLORS, SPACING } from '../../theme';
+import { ScreenNames, FoodItem, AnalysisError } from '../../types';
+import { COLORS, SPACING, BORDER_RADIUS } from '../../theme';
 import { Typography, Button } from '../../components';
 import { Ionicons } from '@expo/vector-icons';
+import { analyzeFood } from '../../services/aiService';
 
 type ScanNavProp = NativeStackNavigationProp<ScreenNames, 'Scan'>;
-
-const createMockFoodItem = (imageUri: string): FoodItem => ({
-  id: Date.now().toString(),
-  name: 'Grilled Chicken Salad',
-  confidence: 0.85,
-  portionSize: '1 serving',
-  portionGrams: 250,
-  nutrition: {
-    calories: 320,
-    protein: 28,
-    carbs: 12,
-    fat: 18,
-    fiber: 4,
-    vitamins: [
-      { name: 'Vitamin A', amount: '15%', dailyValue: 15 },
-      { name: 'Vitamin C', amount: '20%', dailyValue: 20 },
-      { name: 'Vitamin D', amount: '10%', dailyValue: 10 },
-      { name: 'Calcium', amount: '12%', dailyValue: 12 },
-      { name: 'Iron', amount: '8%', dailyValue: 8 },
-    ],
-  },
-  imageUrl: imageUri,
-  scannedAt: new Date().toISOString(),
-});
 
 export const ScanScreen: React.FC = () => {
   const navigation = useNavigation<ScanNavProp>();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -48,6 +27,7 @@ export const ScanScreen: React.FC = () => {
 
     if (!result.canceled && result.assets[0]) {
       setSelectedImage(result.assets[0].uri);
+      setError(null);
     }
   };
 
@@ -65,13 +45,30 @@ export const ScanScreen: React.FC = () => {
 
     if (!result.canceled && result.assets[0]) {
       setSelectedImage(result.assets[0].uri);
+      setError(null);
     }
   };
 
-  const analyzeFood = () => {
+  const handleAnalyzeFood = async () => {
     if (!selectedImage) return;
-    const mockFoodItem = createMockFoodItem(selectedImage);
-    navigation.navigate('Results', { foodItem: mockFoodItem });
+    
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      const foodItem = await analyzeFood(selectedImage);
+      navigation.navigate('Results', { foodItem });
+    } catch (err) {
+      const analysisError = err as AnalysisError;
+      setError(analysisError.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedImage(null);
+    setError(null);
   };
 
   return (
@@ -85,7 +82,16 @@ export const ScanScreen: React.FC = () => {
 
       <View style={styles.previewContainer}>
         {selectedImage ? (
-          <Image source={{ uri: selectedImage }} style={styles.preview} />
+          <View style={styles.imageWrapper}>
+            <Image source={{ uri: selectedImage }} style={styles.preview} />
+            <Button
+              title="Clear"
+              onPress={clearSelection}
+              variant="secondary"
+              icon={<Ionicons name="close-circle" size={18} color={COLORS.error} />}
+              style={styles.clearButton}
+            />
+          </View>
         ) : (
           <View style={styles.placeholder}>
             <Ionicons name="image-outline" size={64} color={COLORS.textTertiary} />
@@ -96,6 +102,14 @@ export const ScanScreen: React.FC = () => {
         )}
       </View>
 
+      {error && (
+        <View style={styles.errorContainer}>
+          <Typography variant="bodySmall" color={COLORS.error} align="center">
+            {error}
+          </Typography>
+        </View>
+      )}
+
       <View style={styles.actions}>
         <View style={styles.cameraButtons}>
           <Button
@@ -103,21 +117,32 @@ export const ScanScreen: React.FC = () => {
             onPress={takePhoto}
             variant="secondary"
             icon={<Ionicons name="camera" size={18} color={COLORS.primary} />}
+            disabled={isAnalyzing}
           />
           <Button
             title="Gallery"
             onPress={pickFromGallery}
             variant="secondary"
             icon={<Ionicons name="images" size={18} color={COLORS.primary} />}
+            disabled={isAnalyzing}
           />
         </View>
 
-        {selectedImage && (
+        {selectedImage && !isAnalyzing && (
           <Button
             title="Analyze Food"
-            onPress={analyzeFood}
+            onPress={handleAnalyzeFood}
             icon={<Ionicons name="sparkles" size={18} color={COLORS.white} />}
           />
+        )}
+
+        {isAnalyzing && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Typography variant="bodySmall" color={COLORS.textSecondary} align="center">
+              Analyzing food...
+            </Typography>
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -139,11 +164,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: SPACING.lg,
   },
+  imageWrapper: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+  },
   preview: {
     width: '100%',
     height: '100%',
     borderRadius: 16,
     resizeMode: 'cover',
+  },
+  clearButton: {
+    position: 'absolute',
+    top: SPACING.md,
+    right: SPACING.md,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
   },
   placeholder: {
     width: '100%',
@@ -157,6 +194,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: SPACING.sm,
   },
+  errorContainer: {
+    backgroundColor: COLORS.error + '15',
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.md,
+    marginBottom: SPACING.md,
+  },
   actions: {
     gap: SPACING.md,
     marginBottom: SPACING.xl,
@@ -164,5 +207,10 @@ const styles = StyleSheet.create({
   cameraButtons: {
     flexDirection: 'row',
     gap: SPACING.md,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    padding: SPACING.lg,
+    gap: SPACING.sm,
   },
 });

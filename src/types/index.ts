@@ -24,6 +24,11 @@ export interface FoodItem {
   scannedAt: string;
 }
 
+export type AnalysisError = {
+  code: 'API_ERROR' | 'NETWORK_ERROR' | 'PARSE_ERROR' | 'NO_API_KEY';
+  message: string;
+};
+
 export type ScreenNames = {
   Home: undefined;
   Scan: undefined;

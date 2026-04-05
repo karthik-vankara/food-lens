@@ -146,20 +146,24 @@ FoodLens/
 - Image compression (0.8 quality)
 - Mock data generation for testing flow
 
-### Phase 3: AI Integration (Next)
-- FoodAnalysisService interface
-- Gemini Vision API adapter
+### Phase 3: AI Integration ✅
+- AI Service abstraction (aiService.ts) - switchable providers
+- OpenAI GPT-4o Mini adapter (openaiService.ts) - Primary
+- Gemini adapter (geminiService.ts) - Backup (quota exceeded)
+- Image to base64 conversion
 - Prompt engineering for nutrition extraction
-- JSON response parsing
-- Error handling and retries
+- JSON response parsing and validation
+- Error handling with user-friendly messages
+- Loading states during analysis
+- Retry functionality on error
+- Clear button to retake photo
 
-### Phase 4: Results & Confirmation
-- Connect AI results to UI
-- Food name confirmation
-- Portion size display
-- Save to history flow
+### Phase 4: Results & Confirmation ✅
+- AI results displayed in ResultsScreen
+- Save to history flow implemented
+- Loading states during analysis
 
-### Phase 5: History & Polish
+### Phase 5: History & Polish (Next)
 - Real history data integration
 - Loading states and error handling
 - App icon and splash screen
@@ -206,11 +210,25 @@ npm run web
 
 ## Configuration
 
-### API Key Setup (Phase 3)
-The app will use Google Gemini Vision API. Get your API key from:
-https://ai.google.dev/
+### API Key Setup
+The app uses an abstraction layer to support multiple AI providers. Configure the provider and API key:
 
-The key is stored securely in AsyncStorage on the device.
+**1. Select Active Provider** in `src/services/aiService.ts`:
+```ts
+const ACTIVE_PROVIDER: AIProvider = 'openai';  // or 'gemini'
+```
+
+**2. Add API Key** in the respective service file:
+
+**For OpenAI (Primary):**
+- Get your API key from: https://platform.openai.com/api-keys
+- Add to: `src/services/openaiService.ts`
+- Model: `gpt-4o-mini`
+
+**For Gemini (Backup):**
+- Get your API key from: https://aistudio.google.com/app/apikey
+- Add to: `src/services/geminiService.ts`
+- Model: `gemini-2.0-flash`
 
 ### Permissions
 - **Camera**: Required for taking food photos

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, StyleProp, ViewStyle } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS } from '../theme';
 
 interface ButtonProps {
@@ -9,6 +9,7 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,6 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   loading = false,
   icon,
+  style,
 }) => {
   const buttonStyle = [
     styles.button,
@@ -25,11 +27,13 @@ export const Button: React.FC<ButtonProps> = ({
     variant === 'secondary' && styles.secondaryButton,
     variant === 'outline' && styles.outlineButton,
     disabled && styles.disabledButton,
+    style,
   ];
 
   const textStyle = [
     styles.text,
     variant === 'outline' && styles.outlineText,
+    variant === 'secondary' && styles.secondaryText,
     disabled && styles.disabledText,
   ];
 
@@ -91,6 +95,9 @@ const styles = StyleSheet.create({
   },
   outlineText: {
     color: COLORS.primary,
+  },
+  secondaryText: {
+    color: COLORS.text,
   },
   disabledText: {
     color: COLORS.textTertiary,
