@@ -268,6 +268,25 @@ const ACTIVE_PROVIDER: AIProvider = 'openai';  // or 'gemini'
 
 ---
 
+## Core Problem (Future Enhancement)
+
+⚠️ **Current Gap:** No strong differentiation
+
+| What App Answers | What Users Actually Care About |
+|------------------|-------------------------------|
+| "What are calories in this food?" | "Can I eat this?" |
+| | "Will this help my goal?" |
+| | "What should I eat next?" |
+
+**Future Implementation Ideas:**
+- Personalized recommendations based on user goals (weight loss, muscle gain, maintenance)
+- Food compatibility checks ("Is this good for my current diet?")
+- Meal planning suggestions ("What should I eat next?")
+- Goal progress tracking and insights
+- Dietary restrictions handling (keto, vegan, gluten-free, etc.)
+
+---
+
 ## Version
 
 **Current Version:** 1.0.1
