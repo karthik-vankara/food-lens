@@ -172,6 +172,18 @@ FoodLens/
 
 ---
 
+## App Screenshots
+
+<p align="center">
+  <img src="assets/app-screenshots/landing-page.PNG" width="18%" />
+  <img src="assets/app-screenshots/scan-age.PNG" width="18%" />
+  <img src="assets/app-screenshots/results1-page.PNG" width="18%" />
+  <img src="assets/app-screenshots/results2-page.PNG" width="18%" />
+  <img src="assets/app-screenshots/history-page.PNG" width="18%" />
+</p>
+
+---
+
 ## App Info
 - Real history data integration
 - Loading states and error handling
